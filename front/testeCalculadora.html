@@ -1,0 +1,39 @@
+ <html>
+ <head><title> Formulario</title>
+ <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+ </head>
+ <body>
+ 
+ <div id="app">
+  <p>{{message}}</p>
+	<p>{{v1}} + {{v2}}</p>
+  
+    <label for="email">Insira os valores: </label>
+    <input type="text" v-model="v1">
+	 <input type="text" v-model="v2">
+  <button @click="calcular(v1,v2)">Calcular</button><br>
+  Resultado:
+  {{resultado}}
+  
+ </div>
+
+</center>
+</body>
+
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Vamos Calcular?',
+	v1: '',
+	v2: '',
+	resultado: ''
+  },
+  methods: {
+		calcular: function(v1, v2){
+		this.resultado = parseInt(v1) + parseInt(v2)
+		}
+		}
+})
+</script>
+</html>

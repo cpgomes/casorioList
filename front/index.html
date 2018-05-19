@@ -1,0 +1,55 @@
+ <html>
+ <head>  <meta charset="UTF-8"><title> Formulario</title>
+ <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.0"></script>
+ </head>
+ <body>
+ 
+ <div id="app">
+  {{ message }}
+	{{teste}}
+ 
+ <center>
+ <h3>Para receber mais dicas deixe o seu email.</h3><br>
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input type="email" class="form-control" id="email" v-model="teste">
+  </div><br>
+  <button @click="buscar()">Buscar</button><br>
+  {{someData}}
+
+
+</center>
+</div>
+</body>
+
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Olá Vue!',
+	teste: '',
+	someData:''
+  },
+  methods: {
+		calcular: function(v1, v2){
+		this.resultado = parseInt(v1) + parseInt(v2)
+		},
+		buscar: function(){
+		alert("teste")
+		this.$http.get('http://localhost:3000/api/v1/pesquisar/4').then(response => {
+		console.log(response)
+
+    // get body data
+    this.someData = response;
+
+  }, response => {
+    // error callback
+  });
+		}
+		
+		}
+  
+})
+</script>
+</html>
