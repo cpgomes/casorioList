@@ -38,11 +38,12 @@ router.post('/api/v1/criar', (req, res, next) => {
   });
 });
 
-router.get('/api/v1/deletar/:todo_id', (req, res, next) => {
+router.delete('/api/v1/deletar/:todo_id', (req, res, next) => {
 
   const results = [];
   // Grab data from the URL parameters
   const id = req.params.todo_id;
+  console.log(id);
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
     // Handle connection errors
@@ -67,12 +68,10 @@ router.get('/api/v1/deletar/:todo_id', (req, res, next) => {
   });
 });
 
-router.get('/api/v1/atualizar/:todo_id/:nome/:sobrenome', (req, res, next) => {
+router.put('/api/v1/atualizar/:todo_id', (req, res, next) => {
   const results = [];
   // Grab data from the URL parameters
   const id = req.params.todo_id;
-  const nome = req.params.nome;
-  const sobrenome = req.params.sobrenome;
   // Grab data from http request
   const data = {text: req.body.text, complete: req.body.complete};
   // Get a Postgres client from the connection pool
@@ -85,7 +84,7 @@ router.get('/api/v1/atualizar/:todo_id/:nome/:sobrenome', (req, res, next) => {
     }
     // SQL Query > Update Data
     client.query('UPDATE itens SET nome=($1), sobrenome=($2) WHERE id=($3)',
-    [nome, sobrenome, id]);
+    [req.body.nome, req.body.sobrenome, id]);
     // SQL Query > Select Data
     const query = client.query("SELECT * FROM itens ORDER BY id ASC");
     // Stream results back one row at a time

@@ -1,69 +1,168 @@
- <html>
- <head><title> Formulario</title>
+<html>
 
- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<head>
+  <title> Formulario</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
- </head>
- <body>
- 
- <div id="app">
-  <p>{{message}}</p>
-	<p>{{v1}} + {{v2}}</p>
-  
-    <label for="email">Nome </label>
-	 <input type="text" v-model="nome">
-	 <label for="email">Sobrenome </label>
-	 <input type="text" v-model="sobrenome">
-  <button @click="enviar">Enviar</button><br>
-  
-  <ul id="example-1">
-  <li v-for="item in someData.body">
-    {{ item.nome }} {{item.sobrenome}}
-  </li>
-</ul>
-  
-  Resultado:
-  {{resultado}}
-  
-  
- </div>
+</head>
 
-</center>
+<body>
+
+  <!-- <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">@</span>
+        <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+      </div>
+      
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Recipient's username" aria-describedby="basic-addon2">
+        <span class="input-group-addon" id="basic-addon2">@example.com</span>
+      </div>
+      
+      <div class="input-group">
+        <span class="input-group-addon">$</span>
+        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+        <span class="input-group-addon">.00</span>
+      </div>
+      
+      <label for="basic-url">Your vanity URL</label>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon3">https://example.com/users/</span>
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+      </div> -->
+
+  <div id="app">
+    <p>{{message}}</p>
+    <!-- <p>{{v1}} + {{v2}}</p> -->
+
+    <div class="input-group">
+      <label for="nome">Nome</label>
+      <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" v-model="nome">
+    </div>
+    <div class="input-group">
+      <label for="sobrenome">Sobrenome</label>
+      <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" v-model="sobrenome">
+    </div>
+    <br>
+    <button type="button" class="btn btn-primary" @click="enviar">Enviar</button>
+    <br>
+    <br>
+
+    <table class="table table-bordered">
+      <tr>
+        <th>Nome</th>
+        <th>Sobrenome</th>
+        <th>Opções</th>
+      </tr>
+      <tr v-for="(item, index) in someData.body">
+        <td v-if="exibir != index">{{ item.nome }}</td>
+        <td v-if="exibir === index"><input type="text" class="form-control" v-model="item.nome"></td>
+        <td v-if="exibir != index">{{item.sobrenome}}</td>
+        <td v-if="exibir === index"><input type="text" class="form-control" v-model="item.sobrenome">
+        </td>
+        <td>
+            <button type="button" class="btn btn-default" @click="editar(index)">Editar</button>
+            <button type="button" class="btn btn-default" @click="excluir(item.id)">Excluir</button>
+            <button type="button" class="btn btn-default" @click="atualizar(item.id, item)">Atualizar</button></td>
+
+          </tr>
+      </table>
+      <!-- <li v-for="item in someData.body">
+        {{ item.nome }} {{item.sobrenome}}
+      </li>
+    </ul> -->
+
+    <!-- Resultado: {{resultado}} -->
+
+
+  </div>
+
+  </center>
 </body>
 
 <script>
-var app = new Vue({
-  el: '#app',
-  data: {
-    message: '',
-	v1: '',
-	v2: '',
-	nome:'',
-	sobrenome:'',
-	someData:'',
-	//resultado: ''
-  },
-  created: function(){
-  this.$http.get('http://localhost:3000/api/v1/pesquisar').then(response => {
-		console.log(response)
+  var app = new Vue({
+    el: '#app',
+    data: {
+      message: '',
+      v1: '',
+      v2: '',
+      nome: '',
+      sobrenome: '',
+      someData: '',
+      exibir: null,
+      //resultado: ''
+    },
+    created: function () {
+     this.listar();
+    },
+    methods: {
+      enviar: function () {
+        this.$http.post('http://localhost:3000/api/v1/criar', { nome: this.nome, sobrenome: this.sobrenome }).then(response =>{
+          this.listar();
+          this.nome = '';
+          this.sobrenome = '';
+        });
+      },
+      listar: function(){
+        this.$http.get('http://localhost:3000/api/v1/pesquisar').then(response => {
+        console.log(response)
 
-    // get body data
-    this.someData = response;
+        // get body data
+        this.someData = response;
 
-  }, response => {
-    // error callback
-  });
-  },
-  methods: {
-	enviar: function(){
-	alert()
-	this.$http.post('http://localhost:3000/api/v1/criar', {nome: this.nome, sobrenome:this.sobrenome}).then();
-	},
-  
-		//calcular: function(v1, v2){
-		//this.resultado = parseInt(v1) + parseInt(v2)
-		//}
-		}
-})
+      }, response => {
+        // error callback
+      });
+    },
+
+      excluir: function(id){
+        this.$http.delete('http://localhost:3000/api/v1/deletar/'+id).then(response => {
+        console.log(response)
+
+        // get body data
+        this.someData = response;
+
+      }, response => {
+        // error callback
+      });
+      },
+
+      atualizar: function(id, body){
+       
+        this.$http.put('http://localhost:3000/api/v1/atualizar/'+id, body).then(response => {
+        
+
+        // get body data
+        this.someData = response;
+        this.editar(null);
+
+      }, response => {
+        // error callback
+      });
+       },
+       editar: function(value){
+         this.exibir = value;
+       }
+      }
+
+      //calcular: function(v1, v2){
+      //this.resultado = parseInt(v1) + parseInt(v2)
+      //}
+    }
+  ,)
 </script>
+
 </html>
